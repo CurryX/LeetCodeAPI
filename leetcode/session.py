@@ -21,3 +21,17 @@ class LeetCodeSession:
                                       "csrfmiddlewaretoken": csrf},
                     headers={"referer": urls.LOGIN})
         return self.check_login()
+
+    def logout(self) -> bool:
+        self.s.get(urls.LOGOUT)
+        return True
+
+    def close(self) -> None:
+        self.logout()
+        self.s.close()
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.close()

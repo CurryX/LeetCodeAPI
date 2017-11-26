@@ -11,8 +11,12 @@ class SessionTest(unittest.TestCase):
             self.fail("Must set credentials as environment variables.")
 
     def test_login(self):
-        s = session.LeetCodeSession()
-        self.assertTrue(s.login(self.username, self.password))
+        with session.LeetCodeSession() as s:
+            self.assertFalse(s.check_login())
+            self.assertTrue(s.login(self.username, self.password))
+            self.assertTrue(s.check_login())
+            self.assertTrue(s.logout())
+            self.assertFalse(s.check_login())
 
 
 if __name__ == "__main__":
