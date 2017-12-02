@@ -26,10 +26,11 @@ class SessionTest(LeetCodeTestCase):
 
 
 class ClientTest(LeetCodeTestCase):
+    c = apis.LeetCodeClient()
+
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        cls.c = apis.LeetCodeClient()
         cls.c.login(cls.username, cls.password)
 
     def test_get_problems(self):
@@ -45,8 +46,30 @@ class ClientTest(LeetCodeTestCase):
         self.assertGreater(two_sum.total_acs, 0)
         self.assertGreater(two_sum.total_submitted, 0)
 
-    def tearDown(self):
-        self.c.close()
+    def test_submission(self):
+        id = self.c.submit("python", 1, "two-sum", """
+class Solution:
+    def twoSum(self, nums, target):
+        hm = {}
+        for i in range(0, len(nums)):
+            if target-nums[i] in hm:
+                return (hm[target-nums[i]], i)
+            else:
+                hm[nums[i]]=i
+        """)
+        self.assertGreater(id, 0)
+        for i in range(5):
+            submission = self.c.submission_status(id)
+            if submission.state == "SUCCESS":
+                break
+        else:
+            self.fail()
+        self.assertEqual(submission.status_msg, "Accepted")
+
+    @classmethod
+    def tearDownClass(cls):
+        super().tearDownClass()
+        cls.c.close()
 
 
 if __name__ == "__main__":

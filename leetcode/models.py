@@ -15,3 +15,17 @@ class Problem:
         self.id: int = stat.get("question_id", 0)
         self.total_acs: int = stat.get("total_acs", 0)
         self.total_submitted: int = stat.get("total_submitted", 0)
+
+
+class Submission:
+    def __init__(self, dic: Dict[str, object]):
+        self.total_testcases: int = dic.get("total_testcases", 0)
+        self.total_correct: int = dic.get("total_correct", 0)
+        self.stderr: str = dic.get("code_output", None)
+        self.stdout: str = dic.get("std_output", None)
+        self.status_code: int = dic.get("status_code", 0)
+        self.status_msg: str = dic.get("status_msg", None)
+        self.state: str = dic.get("state", None)
+        self.status_runtime: str = dic.get("status_runtime", None)
+        self.question_id: str = dic.get("question_id", None)
+        self.lang: str = dic.get("lang", None)
