@@ -4,21 +4,21 @@ import unittest
 
 from ..leetcode.tests import LeetCodeTestCase
 from ..leetcode import apis
-from .injection import inject, entry_point
+from .injection import inject
 
 
-class InjectionTest(unittest.TestCase):
+class IntectionTest(unittest.TestCase):
     def test_injection(self):
         src = inject("""
 class Solution:
-    def twoSum(self, nums, target): %s
+    def twoSum(self, nums, target):
         hm = {}
         for i in range(0, len(nums)):
             if target-nums[i] in hm:
                 return [hm[target-nums[i]], i]
             else:
                 hm[nums[i]]=i
-        """ % entry_point, 2)
+        """, "twoSum", 2)
         src += """
 s = Solution()
 print(s.twoSum([1234, 0, 4321], 5555))
@@ -50,5 +50,8 @@ class DataCrawlerTest(LeetCodeTestCase):
         cls.c.login(cls.username, cls.password)
 
 
+
+
 if __name__ == "__main__":
     unittest.main()
+
