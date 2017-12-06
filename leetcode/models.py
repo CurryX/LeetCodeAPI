@@ -29,3 +29,17 @@ class Submission:
         self.status_runtime: str = dic.get("status_runtime", None)
         self.question_id: str = dic.get("question_id", None)
         self.lang: str = dic.get("lang", None)
+
+
+class ProblemDetail:
+    class DefaultCode:
+        def __init__(self, dic: Dict[str, object]):
+            self.lang = dic.get("text", None)
+            self.code = dic.get("defaultCode", None)
+
+    def __init__(self, dic: Dict[str, object], description: str):
+        self.category = dic.get("categoryTitle", None)
+        self.description = description
+        self.default_codes: Dict[str, ProblemDetail.DefaultCode] = {}
+        for e in dic.get("codeDefinition", []):
+            self.default_codes[e["value"]] = ProblemDetail.DefaultCode(e)

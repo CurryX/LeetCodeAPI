@@ -1,7 +1,11 @@
 from typing import List
+
+import js2py
+from bs4 import BeautifulSoup
+
 from . import urls
 from .session import LeetCodeSession
-from .models import Problem, Submission
+from .models import Problem, Submission, ProblemDetail
 
 
 class LeetCodeClient(LeetCodeSession):
@@ -24,12 +28,22 @@ class LeetCodeClient(LeetCodeSession):
         except:
             return -1
 
-    def submit_problem(self, lang: str, problem: Problem, code: str) -> int:
-        return self.submit(lang, problem.id, problem.title_slug, code)
-
     def submission_status(self, submission_id: int) -> Submission:
         r = self.s.get(urls.SUBMISSION_STATUS % submission_id)
         try:
             return Submission(r.json())
         except:
             return Submission({})
+
+    def get_problem_detail(self, question_slug: str) -> ProblemDetail:
+        html = self.s.get(urls.DESCRIPTION % question_slug).text
+        doc = BeautifulSoup(html, "html5lib")
+        description = doc.find(class_="question-description").get_text()
+        page_data = {}
+        for e in doc.find_all("script"):
+            s = e.get_text()
+            if "var pageData" in s:
+                s += "; pageData"
+                page_data = js2py.eval_js(s).to_dict()
+                break
+        return ProblemDetail(page_data, description)

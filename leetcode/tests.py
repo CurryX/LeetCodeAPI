@@ -66,6 +66,16 @@ class Solution:
             self.fail()
         self.assertEqual(submission.status_msg, "Accepted")
 
+    def test_get_detail(self):
+        pd = self.c.get_problem_detail("two-sum")
+        self.assertIn("target", pd.description)
+        self.assertEqual(pd.category, "Algorithms")
+        self.assertGreaterEqual(len(pd.default_codes), 3)
+        self.assertIn("python", pd.default_codes)
+        python = pd.default_codes["python"]
+        self.assertEqual(python.lang, "Python")
+        self.assertIn("def twoSum", python.code)
+
     @classmethod
     def tearDownClass(cls):
         super().tearDownClass()
