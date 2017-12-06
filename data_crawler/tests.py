@@ -7,7 +7,7 @@ from ..leetcode import apis
 from .injection import inject
 
 
-class IntectionTest(unittest.TestCase):
+class InjectionTest(unittest.TestCase):
     def test_injection(self):
         src = inject("""
 class Solution:
@@ -50,8 +50,5 @@ class DataCrawlerTest(LeetCodeTestCase):
         cls.c.login(cls.username, cls.password)
 
 
-
-
 if __name__ == "__main__":
     unittest.main()
-

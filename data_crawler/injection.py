@@ -1,9 +1,6 @@
 import re
 
 
-injected = []
-
-
 def inject(src: str, func: str, count: int) -> str:
     lines = src.splitlines()
     lines.insert(0, "xxx_counter = 0")
@@ -17,5 +14,5 @@ def inject(src: str, func: str, count: int) -> str:
                     break
             lines.insert(i + 1, "%sprint(locals()); global xxx_counter; xxx_counter += 1" % indent)
             lines.insert(i + 2, "%sif xxx_counter >= %d: return" % (indent, count))
-            break
-    return "\r\n".join(lines)
+            return "\r\n".join(lines)
+    return ""
