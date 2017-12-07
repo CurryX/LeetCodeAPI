@@ -4,7 +4,7 @@ import unittest
 
 from ..leetcode.tests import LeetCodeTestCase
 from ..leetcode import apis
-from .injection import inject
+from .injection import inject, find_funcs
 
 
 class InjectionTest(unittest.TestCase):
@@ -39,6 +39,24 @@ print(s.twoSum([2345, 0, 5432], 9999))
         self.assertIn("2345", lines[2])
         self.assertIn("5432", lines[2])
         self.assertEqual(lines[3], str(None))
+
+    def test_find_funcs(self):
+        funcs = find_funcs("""
+# Definition for singly-linked list.
+# class ListNode(object):
+#     def __init__(self, x):
+#         self.val = x
+#         self.next = None
+
+class Solution(object):
+    def addTwoNumbers(self, l1, l2):
+        pass
+    def __second2Function__(self):
+        pass
+""")
+        self.assertEqual(len(funcs), 2)
+        self.assertIn("addTwoNumbers", funcs)
+        self.assertIn("__second2Function__", funcs)
 
 
 class DataCrawlerTest(LeetCodeTestCase):
