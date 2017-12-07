@@ -18,7 +18,7 @@ class Solution:
                 return [hm[target-nums[i]], i]
             else:
                 hm[nums[i]]=i
-        """, "twoSum", 2)
+        """, ["twoSum"], 2)
         src += """
 s = Solution()
 print(s.twoSum([1234, 0, 4321], 5555))
