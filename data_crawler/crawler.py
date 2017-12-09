@@ -1,0 +1,86 @@
+import sys, os
+
+import time
+
+from data_crawler.injection import inject, find_funcs
+from leetcode.apis import LeetCodeClient
+from leetcode.models import Problem
+
+
+submission_interval = 10
+submission_count = 3
+wait_interval = 2
+wait_count = 10
+
+
+def crawl(problem: Problem, path: str, file: str) -> None:
+    print("Begin crawling %d: %s (%s)" % (problem.id, problem.title, problem.title_slug))
+    with open(os.path.join(path, file), "r") as f:
+        src = f.read()
+    funcs = find_funcs(src)
+    id = c.submit("python", problem.id, problem.title_slug, src)
+    if id <= 0:
+        print("Submission failed.")
+        return
+    for i in range(wait_count):
+        time.sleep(wait_interval)
+        submission = c.submission_status(id)
+        if submission.state == "SUCCESS":
+            break
+        if submission.state == "FAILURE":
+            print("Test failed.")
+            return
+    else:
+        print("Wait timeout.")
+        return
+    if submission.status_msg != "Accepted":
+        print("Submission status %s" % submission.status_msg)
+        return
+    total = submission.total_testcases
+    print("Original code OK, total %d test cases." % total)
+    for i in range(total):
+        for j in range(submission_count):
+            time.sleep(submission_interval)
+            id = c.submit("python3", problem.id, problem.title_slug, inject(src, funcs, i + 1))
+            if id > 0:
+                break
+        else:
+            print("Submission failed.")
+            return
+        for j in range(wait_count):
+            time.sleep(wait_interval)
+            submission = c.submission_status(id)
+            if submission.state == "SUCCESS":
+                break
+            if submission.state == "FAILURE":
+                print("Test failed.")
+                return
+        else:
+            print("Wait timeout.")
+            return
+        with open(os.path.join(path, "%d-%d.in" % (problem.id, i + 1)), "w") as f:
+            f.write(submission.stdout)
+        if submission.expected:
+            with open(os.path.join(path, "%d-%d.ans" % (problem.id, i + 1)), "w") as f:
+                f.write(submission.expected)
+        print("Test data %d/%d got." % (i + 1, total))
+    print("End crawling %d: %s (%s)" % (problem.id, problem.title, problem.title_slug))
+
+
+if __name__ == "__main__":
+    if len(sys.argv) != 4:
+        print("Usage: %s <data_dir> <username> <password>" % sys.argv[0])
+        exit()
+    c = LeetCodeClient()
+    if not c.login(sys.argv[2], sys.argv[3]):
+        print("Login failed.")
+        exit()
+    problems = c.get_problems()
+    path = sys.argv[1]
+    for file in os.listdir(path):
+        if file.endswith(".py"):
+            name = file[0: len(file) - 3]
+            for p in problems:
+                if str(p.id) == name or p.title_slug == name:
+                    crawl(p, path, file)
+                    break

@@ -101,3 +101,7 @@ ENV/
 # Intellij
 .idea/
 *.iml
+
+# Crawler output
+examples/*.ans
+examples/*.in

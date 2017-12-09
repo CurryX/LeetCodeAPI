@@ -29,6 +29,7 @@ class Submission:
         self.status_runtime: str = dic.get("status_runtime", None)
         self.question_id: str = dic.get("question_id", None)
         self.lang: str = dic.get("lang", None)
+        self.expected: str = dic.get("expected_output", None)
 
 
 class ProblemDetail:
