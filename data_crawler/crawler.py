@@ -38,33 +38,29 @@ def crawl(problem: Problem, path: str, file: str) -> None:
         return
     total = submission.total_testcases
     print("Original code OK, total %d test cases." % total)
-    for i in range(total):
-        for j in range(submission_count):
-            time.sleep(submission_interval)
-            id = c.submit("python3", problem.id, problem.title_slug, inject(src, funcs, i + 1))
-            if id > 0:
-                break
-        else:
-            print("Submission failed.")
+    for j in range(submission_count):
+        time.sleep(submission_interval)
+        id = c.submit("python3", problem.id, problem.title_slug, inject(src, funcs, total))
+        if id > 0:
+            break
+    else:
+        print("Submission failed.")
+        return
+    for j in range(wait_count):
+        time.sleep(wait_interval)
+        submission = c.submission_status(id)
+        if submission.state == "SUCCESS":
+            break
+        if submission.state == "FAILURE":
+            print("Test failed.")
             return
-        for j in range(wait_count):
-            time.sleep(wait_interval)
-            submission = c.submission_status(id)
-            if submission.state == "SUCCESS":
-                break
-            if submission.state == "FAILURE":
-                print("Test failed.")
-                return
-        else:
-            print("Wait timeout.")
-            return
-        with open(os.path.join(path, "%d-%d.in" % (problem.id, i + 1)), "w") as f:
-            f.write(submission.stdout)
-        if submission.expected:
-            with open(os.path.join(path, "%d-%d.ans" % (problem.id, i + 1)), "w") as f:
-                f.write(submission.expected)
-        print("Test data %d/%d got." % (i + 1, total))
+    else:
+        print("Wait timeout.")
+        return
+    with open(os.path.join(path, "%d.in" % problem.id), "w") as f:
+        f.write(submission.stdout)
     print("End crawling %d: %s (%s)" % (problem.id, problem.title, problem.title_slug))
+    time.sleep(submission_interval)
 
 
 if __name__ == "__main__":

@@ -1,4 +1,5 @@
 import io
+import json
 import sys
 import unittest
 
@@ -30,15 +31,15 @@ print(s.twoSum([2345, 0, 5432], 9999))
         output: str = sys.stdout.getvalue()
         sys.stdout = stdout
         lines = output.splitlines()
-        self.assertGreaterEqual(len(lines), 4)
-        self.assertIn("5555", lines[0])
-        self.assertIn("1234", lines[0])
-        self.assertIn("4321", lines[0])
-        self.assertEqual(lines[1], str([0, 2]))
-        self.assertIn("9999", lines[2])
-        self.assertIn("2345", lines[2])
-        self.assertIn("5432", lines[2])
-        self.assertEqual(lines[3], str(None))
+        self.assertEquals(len(lines), 3)
+        self.assertEquals(lines[0], "[0, 2]")
+        self.assertEquals(lines[2], "None")
+        j = json.loads(lines[1])
+        self.assertEquals(len(j), 2)
+        self.assertIn("target", j[0])
+        self.assertIn("nums", j[1])
+        self.assertEquals(j[0]["target"], 5555)
+        self.assertEquals(j[1]["nums"], [2345, 0, 5432])
 
     def test_find_funcs(self):
         funcs = find_funcs("""
