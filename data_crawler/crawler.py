@@ -60,7 +60,6 @@ def crawl(problem: Problem, path: str, file: str) -> None:
     with open(os.path.join(path, "%d.in" % problem.id), "w") as f:
         f.write(submission.stdout)
     print("End crawling %d: %s (%s)" % (problem.id, problem.title, problem.title_slug))
-    time.sleep(submission_interval)
 
 
 if __name__ == "__main__":
@@ -79,4 +78,5 @@ if __name__ == "__main__":
             for p in problems:
                 if str(p.id) == name or p.title_slug == name:
                     crawl(p, path, file)
+                    time.sleep(submission_interval)
                     break
