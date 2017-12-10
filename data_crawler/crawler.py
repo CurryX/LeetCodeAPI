@@ -18,7 +18,7 @@ def crawl(problem: Problem, path: str, file: str) -> None:
     with open(os.path.join(path, file), "r") as f:
         src = f.read()
     funcs = find_funcs(src)
-    id = c.submit("python", problem.id, problem.title_slug, src)
+    id = c.submit("python3", problem.id, problem.title_slug, src)
     if id <= 0:
         print("Submission failed.")
         return
