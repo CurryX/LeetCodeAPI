@@ -13,11 +13,11 @@ wait_interval = 2
 wait_count = 10
 
 
-def crawl(problem: Problem, path: str, file: str) -> None:
+def crawl(problem: Problem, default_code: str, path: str, file: str) -> None:
     print("Begin crawling %d: %s (%s)" % (problem.id, problem.title, problem.title_slug))
     with open(os.path.join(path, file), "r") as f:
         src = f.read()
-    funcs = find_funcs(src)
+    funcs = find_funcs(default_code)
     id = c.submit("python3", problem.id, problem.title_slug, src)
     if id <= 0:
         print("Submission failed.")
@@ -77,6 +77,10 @@ if __name__ == "__main__":
             name = file[0: len(file) - 3]
             for p in problems:
                 if str(p.id) == name or p.title_slug == name:
-                    crawl(p, path, file)
-                    time.sleep(submission_interval)
+                    d = c.get_problem_detail(p.title_slug)
+                    if not "python3" in d.default_codes:
+                        print("python3 not in default codes for %s.", p.title_slug)
+                    else:
+                        crawl(p, d.default_codes["python3"].code, path, file)
+                        time.sleep(submission_interval)
                     break
