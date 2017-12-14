@@ -38,7 +38,10 @@ class LeetCodeClient(LeetCodeSession):
     def get_problem_detail(self, question_slug: str) -> ProblemDetail:
         html = self.s.get(urls.DESCRIPTION % question_slug).text
         doc = BeautifulSoup(html, "html5lib")
-        description = doc.find(class_="question-description").get_text()
+        element = doc.find(class_="question-description")
+        if not element:
+            return ProblemDetail({}, "")
+        description = element.get_text()
         page_data = {}
         for e in doc.find_all("script"):
             s = e.get_text()
