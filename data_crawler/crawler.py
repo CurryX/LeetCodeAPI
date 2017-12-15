@@ -15,7 +15,7 @@ wait_count = 10
 
 def crawl(problem: Problem, default_code: str, path: str, file: str) -> None:
     print("Begin crawling %d: %s (%s)" % (problem.id, problem.title, problem.title_slug))
-    with open(os.path.join(path, file), "r") as f:
+    with open(os.path.join(path, file), "r", encoding="utf-8") as f:
         src = f.read()
     funcs = find_funcs(default_code)
     id = c.submit("python3", problem.id, problem.title_slug, src)

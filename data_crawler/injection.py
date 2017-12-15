@@ -16,7 +16,7 @@ def inject(src: str, funcs: List[str], total: int) -> str:
                         break
                 lines.insert(i + 1, "%sglobal xxx_counter, xxx_buf, xxx_total, xxx_segment; xxx_d = locals(); del "
                                     "xxx_d['self']; xxx_buf.append(xxx_d); xxx_counter += 1" % indent)
-                lines.insert(i + 2, "%sif xxx_counter == xxx_total: print(json.dumps(xxx_buf)[xxx_segment * 1000000: "
+                lines.insert(i + 2, "%sif xxx_counter == xxx_total: print(str(xxx_buf)[xxx_segment * 1000000: "
                                     "(xxx_segment + 1) * 1000000]); return" % indent)
     return "\r\n".join(lines)
 

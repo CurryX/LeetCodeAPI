@@ -31,15 +31,15 @@ print(s.twoSum([2345, 0, 5432], 9999))
         output: str = sys.stdout.getvalue()
         sys.stdout = stdout
         lines = output.splitlines()
-        self.assertEquals(len(lines), 3)
-        self.assertEquals(lines[0], "[0, 2]")
-        self.assertEquals(lines[2], "None")
-        j = json.loads(lines[1])
-        self.assertEquals(len(j), 2)
+        self.assertEqual(len(lines), 3)
+        self.assertEqual(lines[0], "[0, 2]")
+        self.assertEqual(lines[2], "None")
+        j = eval(lines[1])
+        self.assertEqual(len(j), 2)
         self.assertIn("target", j[0])
         self.assertIn("nums", j[1])
-        self.assertEquals(j[0]["target"], 5555)
-        self.assertEquals(j[1]["nums"], [2345, 0, 5432])
+        self.assertEqual(j[0]["target"], 5555)
+        self.assertEqual(j[1]["nums"], [2345, 0, 5432])
 
     def test_find_funcs(self):
         funcs = find_funcs("""
