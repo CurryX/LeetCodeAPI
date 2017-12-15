@@ -1,8 +1,5 @@
 from typing import List
 
-import js2py
-from bs4 import BeautifulSoup
-
 from . import urls
 from .session import LeetCodeSession
 from .models import Problem, Submission, ProblemDetail
@@ -36,17 +33,16 @@ class LeetCodeClient(LeetCodeSession):
             return Submission({})
 
     def get_problem_detail(self, question_slug: str) -> ProblemDetail:
-        html = self.s.get(urls.DESCRIPTION % question_slug).text
-        doc = BeautifulSoup(html, "html5lib")
-        element = doc.find(class_="question-description")
-        if not element:
-            return ProblemDetail({}, "")
-        description = element.get_text()
-        page_data = {}
-        for e in doc.find_all("script"):
-            s = e.get_text()
-            if "var pageData" in s:
-                s += "; pageData"
-                page_data = js2py.eval_js(s).to_dict()
-                break
-        return ProblemDetail(page_data, description)
+        csrf = self.s.cookies.get("csrftoken")
+        body = """{"query":"query getQuestionDetail($titleSlug: String!) {\\n  question(titleSlug: $titleSlug) {\\n    questionId\\n    questionTitle\\n    content\\n    difficulty\\n    stats\\n    contributors\\n    companyTags\\n    topicTags\\n    similarQuestions\\n    discussUrl\\n    libraryUrl\\n    mysqlSchemas\\n    randomQuestionUrl\\n    sessionId\\n    categoryTitle\\n    submitUrl\\n    interpretUrl\\n    codeDefinition\\n    sampleTestCase\\n    enableTestMode\\n    metaData\\n    enableRunCode\\n    enableSubmit\\n    judgerAvailable\\n    emailVerified\\n    envInfo\\n    urlManager\\n    likesDislikes {\\n      likes\\n      dislikes\\n      __typename\\n    }\\n    article\\n    questionDetailUrl\\n    isLiked\\n    discussCategoryId\\n    nextChallengePairs\\n    __typename\\n  }}\\n","variables":{"titleSlug":"%s"},"operationName":"getQuestionDetail"}""" % question_slug
+        r = self.s.post(urls.GRAPHQL,
+                        data=body,
+                        headers={"referer": urls.DESCRIPTION % question_slug,
+                                 "X-CSRFToken": csrf,
+                                 "Content-Type": "application/json"})
+        d = {}
+        try:
+            d = r.json()["data"]["question"]
+        except:
+            pass
+        return ProblemDetail(d or {})

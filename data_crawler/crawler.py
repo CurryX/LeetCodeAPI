@@ -18,7 +18,7 @@ def crawl(problem: Problem, default_code: str, path: str, file: str) -> None:
     with open(os.path.join(path, file), "r", encoding="utf-8") as f:
         src = f.read()
     funcs = find_funcs(default_code)
-    id = c.submit("python3", problem.id, problem.title_slug, src)
+    id = c.submit("python", problem.id, problem.title_slug, src)
     if id <= 0:
         print("Submission failed.")
         return
@@ -40,7 +40,7 @@ def crawl(problem: Problem, default_code: str, path: str, file: str) -> None:
     print("Original code OK, total %d test cases." % total)
     for j in range(submission_count):
         time.sleep(submission_interval)
-        id = c.submit("python3", problem.id, problem.title_slug, inject(src, funcs, total))
+        id = c.submit("python", problem.id, problem.title_slug, inject(src, funcs, total))
         if id > 0:
             break
     else:
@@ -78,9 +78,9 @@ if __name__ == "__main__":
             for p in problems:
                 if str(p.id) == name or p.title_slug == name:
                     d = c.get_problem_detail(p.title_slug)
-                    if not "python3" in d.default_codes:
-                        print("python3 not in default codes for %s.", p.title_slug)
+                    if not "python" in d.default_codes:
+                        print("python not in default codes for %s." % p.title_slug)
                     else:
-                        crawl(p, d.default_codes["python3"].code, path, file)
+                        crawl(p, d.default_codes["python"].code, path, file)
                         time.sleep(submission_interval)
                     break

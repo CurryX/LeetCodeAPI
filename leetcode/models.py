@@ -1,3 +1,4 @@
+import json
 from typing import Dict
 
 
@@ -38,9 +39,9 @@ class ProblemDetail:
             self.lang = dic.get("text", None)
             self.code = dic.get("defaultCode", None)
 
-    def __init__(self, dic: Dict[str, object], description: str):
+    def __init__(self, dic: Dict[str, object]):
         self.category = dic.get("categoryTitle", None)
-        self.description = description
+        self.description = dic.get("content", None)
         self.default_codes: Dict[str, ProblemDetail.DefaultCode] = {}
-        for e in dic.get("codeDefinition", []):
+        for e in json.loads(dic.get("codeDefinition", "[]")):
             self.default_codes[e["value"]] = ProblemDetail.DefaultCode(e)
